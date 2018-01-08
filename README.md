@@ -1,6 +1,6 @@
 # coop
 
-> Create a slack like project using VueJS
+> A Vue.js project
 
 ## Build Setup
 
