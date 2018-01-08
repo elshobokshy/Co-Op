@@ -27,8 +27,8 @@ export default {
   },
   methods: {
       signin() {
-          api.post('/members/signin', this.user).then((response) => {
-              console.log(response.data)
+          this.$store.dispatch('auth/login', this.user).then(response => {
+              this.$router.push({name: "home"})
           })
       }
   }
