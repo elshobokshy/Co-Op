@@ -1,16 +1,24 @@
 <template>
   <div class="hello">
-    {{msg}}
+    <h1>{{msg}}</h1>
+    <button @click="signout()">Signout?</button>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'HelloWorld',
+  name: 'Home',
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App'
+      msg: 'Welcome to Your Homepage !!!!!!!'
     }
+  },
+  methods: {
+      signout() {
+          this.$store.dispatch('auth/logout', this.user).then(response => {
+              this.$router.push({name: "signin"})
+          })
+      }
   }
 }
 </script>

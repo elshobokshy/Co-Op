@@ -1,4 +1,5 @@
 import api from '@/api'
+import ls from '@/services/ls'
 
 const initialState = {
     connected: false,
@@ -13,7 +14,7 @@ export default {
     },
     getters: {
         isConnected (state) {
-            return state.connected
+            return state.connected || ls.get('connected')
         },
         getConnectedUser (state) {
             return state.user
@@ -23,8 +24,12 @@ export default {
         setConnectedUser (state, u) {
             state.user = u
             state.connected = true
+            ls.set('token', state.user.token)
+            ls.set('connected', state.connected)
         },
         initState (state) {
+            ls.remove('token')
+            ls.remove('connected')
             Object.assign(state, initialState)
         }
     },
