@@ -31,9 +31,6 @@ export default {
             ls.remove('token')
             ls.remove('connected')
             Object.assign(state, initialState)
-        },
-        profile (state) {
-            ls.set('token', state.user.token)
         }
     },
     actions: {
@@ -47,13 +44,6 @@ export default {
         logout ({commit}) {
             return api.delete('/members/signout').then(response => {
                 commit("initState")
-            }).catch(error => {
-                console.log("store > auth > logout -> error")
-            })
-        },
-        profile ({commit, state}) {
-            return api.get('/members/' + state.user._id + '/signedin').then(response => {
-                commit("profile")
             }).catch(error => {
                 console.log("store > auth > logout -> error")
             })

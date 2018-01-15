@@ -1,7 +1,8 @@
 <template>
   <div class="hello">
-    {{channels}}
     <button @click="signout()">Signout?</button>
+    <button @click="profile()">profile??</button>
+    <button @click="user()">users???</button>
   </div>
 </template>
 
@@ -10,21 +11,17 @@
 import api from '../api'
 export default {
   name: 'Home',
-  data () {
-    return {
-      channels: []
-    }
-  },
-  created () {
-    api.get('/channels').then((response) => {
-      this.channels = response.data
-    })
-  },
   methods: {
       signout() {
           this.$store.dispatch('auth/logout', this.user).then(response => {
               this.$router.push({name: "signin"})
           })
+      },
+      profile () {
+        this.$router.push({name: "profile"})
+      },
+      user() {
+        this.$router.push({name: "newuser"})
       }
   }
 }
