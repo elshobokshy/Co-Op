@@ -17,12 +17,16 @@ export default {
             return config
         }, function (error) {
             return Promise.reject(error);
-        });
+        })
 
         api.interceptors.response.use(function (response) {
             return response;
         }, function (error) {
+            if(error.response && error.response.status == 401) {
+                store.dispatch('auth/logout', ! error.response.data.error.indexOf("wrong token"))
+                options.router.push({name: 'signin'})
+            }
             return Promise.reject(error);
-        });
+        })
     }
 }

@@ -14,7 +14,7 @@ export default {
     },
     getters: {
         isConnected (state) {
-            return state.connected || ls.get('connected')
+            return state.connected 
         },
         getConnectedUser (state) {
             return state.user
@@ -24,12 +24,8 @@ export default {
         setConnectedUser (state, u) {
             state.user = u
             state.connected = true
-            ls.set('token', state.user.token)
-            ls.set('connected', state.connected)
         },
         initState (state) {
-            ls.remove('token')
-            ls.remove('connected')
             Object.assign(state, initialState)
         },
         profile (state) {
@@ -39,17 +35,27 @@ export default {
     actions: {
         login ({commit}, credentials) {
             return api.post('/members/signin', credentials).then(response => {
+                ls.set('token', response.data.token)
                 commit("setConnectedUser", response.data)
             }).catch(error => {
                 console.log("store > auth > login -> error")
             })
         },
-        logout ({commit}) {
-            return api.delete('/members/signout').then(response => {
-                commit("initState")
-            }).catch(error => {
-                console.log("store > auth > logout -> error")
-            })
+        logout ({commit}, forceDeco) {
+            commit("initState")
+            ls.remove('token')
+
+            if(forceDeco) {
+                api.delete('/members/signout').then(response => {
+                    commit("initState")
+                }).catch(error => {
+                    console.log("store > auth > logout -> error")
+                })
+            }
+        },
+        delete ({commit}) {
+            commit("initState")
+            ls.remove('token')
         },
         profile ({commit, state}) {
             return api.get('/members/' + state.user._id + '/signedin').then(response => {

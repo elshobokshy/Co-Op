@@ -30,7 +30,7 @@ export default {
       },
       del() {
           api.delete('/members/' + this.user._id).then(response => {
-                this.$store.dispatch('auth/logout', this.user).then(response => {
+                this.$store.dispatch('auth/delete', this.user).then(response => {
                     this.$router.push({name: "signin"})
                 })
             }).catch(error => {
