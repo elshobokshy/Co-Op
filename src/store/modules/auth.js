@@ -47,6 +47,9 @@ export default {
             }).catch(error => {
                 console.log("store > auth > logout -> error")
             })
+        },
+        initState ({commit}) {
+            commit('initState')
         }
     }
 }
