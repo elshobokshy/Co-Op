@@ -4,6 +4,7 @@ import Signin from '@/components/Signin'
 import Home from '@/components/Home'
 import Profile from '@/components/Profile'
 import Users from '@/components/Users'
+import Channel from '@/components/Channel'
 import store from '@/store'
 
 Vue.use(Router)
@@ -29,6 +30,11 @@ export const router = new Router({
       path: '/newuser',
       name: 'newuser',
       component: Users
+    },
+    {
+      path: '/channel/:id',
+      name: 'channel',
+      component: Channel
     }
   ]
 })

@@ -13,7 +13,7 @@
 
 import api from '../api'
 export default {
-  name: 'Home',
+  name: 'Profile',
   data () {
     return {
       user: {}

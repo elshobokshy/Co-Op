@@ -1,10 +1,9 @@
 <template>
     <div class="hello">
+      <h1>Channels</h1>
       <div v-for="channel in channels"> 
-            Id : {{ channel._id }} | 
-            Label : {{ channel.label }} | 
-            Topic : {{ channel.topic }} <br/>
-        </div>
+          <button @click="getChannel(channel._id)">Channel {{ channel._id }}</button>
+      </div>
       <br/>
       <div>
           <h4>New Channel: </h4>
@@ -68,6 +67,9 @@
       },
       user() {
         this.$router.push({name: "newuser"})
+      },
+      getChannel(c) {
+        this.$router.push({name: "channel", params : { id : c}})
       }
     }
   }
