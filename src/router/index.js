@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Signin from '@/components/Signin'
+import Register from '@/components/Register'
 import Home from '@/components/Home'
 import Profile from '@/components/Profile'
 import Users from '@/components/Users'
@@ -22,13 +23,18 @@ export const router = new Router({
       component: Signin
     },
     {
+      path: '/register',
+      name: 'register',
+      component: Register
+    },
+    {
       path: '/profile',
       name: 'profile',
       component: Profile
     },
     {
-      path: '/newuser',
-      name: 'newuser',
+      path: '/users',
+      name: 'users',
       component: Users
     },
     {
@@ -41,10 +47,18 @@ export const router = new Router({
 
 router.beforeEach((to, from, next) => {
   if(to.name != 'signin' && ! store.getters['auth/isConnected']) {
-    next({name: 'signin', query: {redirect: to.fullPath}})
+    console.log(1)
+    if (to.name != 'register') {
+      console.log(2)
+      next({name: 'signin', query: {redirect: to.fullPath}})
+    } else {
+      next()
+    } 
   } else if (to.name == 'signin' && store.getters['auth/isConnected']) {
+    console.log(3)
     next({name: 'home'})
   } else {
+    console.log(4)
     next()
   }
 })

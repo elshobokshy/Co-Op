@@ -19,4 +19,8 @@ export default {
   color: #2c3e50;
   margin-top: 60px;
 }
+el-container {
+  border: 1px solid #eee;
+  height: 100%;
+}
 </style>

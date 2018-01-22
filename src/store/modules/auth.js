@@ -23,7 +23,7 @@ export default {
     mutations: {
         setConnectedUser (state, u) {
             state.user = u
-            state.connected = true
+            state.connected = true  
         },
         initState (state) {
             Object.assign(state, initialState)

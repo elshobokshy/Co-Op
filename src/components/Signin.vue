@@ -1,40 +1,21 @@
 <template>
-    <div>
-        <h1>Signin</h1>
-        <form @submit.prevent="signin()">
-            <div>
-                <label for="email">Email</label>
-                <input v-model="user.email" id="email">
-            </div>
-            <div>
-                <label for="password">Password</label> 
-                <input v-model="user.password" id="password">
-            </div>
-            <div class="button">
-                <input type="submit" value="Go">
-            </div>
-        </form>
-
-        <h1>Create new user</h1>
-        <form @submit.prevent="newuser()">
-            <div>
-                <label for="fullname">Full name</label>
-                <input v-model="createuser.fullname">
-            </div>
-            <div>
-                <label for="email">Email</label>
-                <input v-model="createuser.email">
-            </div>
-            <div>
-                <label for="password">Password</label> 
-                <input v-model="createuser.password" id="password">
-            </div>
-            <div class="button">
-                <input type="submit" value="Go">
-            </div>
-        </form>
-        <p v-if="created">Account created</p>
-    </div>
+    <el-row :gutter="20">
+        <el-col :span="12" :offset="6">
+            <h1>Welcome back!</h1>
+            <el-form>
+                <el-form-item label="Email">
+                    <el-input @keyup.enter="signin" v-model="user.email" id="email" clearable></el-input>
+                </el-form-item>
+                <el-form-item label="Password">
+                    <el-input @keyup.enter="signin" v-model="user.password" id="password" type="password" clearable></el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" @click="signin">Login</el-button>
+                </el-form-item>
+            </el-form>
+            <p>Need an account? <router-link :to="{name: 'register', path: '/register'}" exact><a>Register</a></router-link> </p>
+        </el-col>
+    </el-row>
 </template>
 
 <script>
@@ -42,9 +23,8 @@ import api from '../api'
 export default {
   data () {
     return {
-      user: {email: '', password:''},
-      createuser: {fullname: '', email: '', password:''},
-      created: false
+      user: {email: '', password:''}
+
     }
   },
   methods: {
@@ -52,15 +32,7 @@ export default {
           this.$store.dispatch('auth/login', this.user).then(response => {
               this.$router.push({name: "home"})
           })
-      },
-      newuser() {
-        api.post('/members', this.createuser).then(response => {
-                this.created = true,
-                this.createuser = {fullname: '', email: '', password:''}
-            }).catch(error => {
-            console.log("can not create account")
-        })
-      },
+      }
   }
 }
 </script>
