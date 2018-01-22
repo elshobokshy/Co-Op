@@ -1,63 +1,103 @@
 <template>
-    <div class="hello">
-      <h1>Channel {{channelInfo.topic}}</h1>
-      Topic : {{channelInfo.label}}
-      <br/>
-      <div>
-          <h1>Edit channel :</h1>
-          <form @submit.prevent="editChannel()">
-              <div>
-                  <label for="label">Label</label>
-                  <input v-model="channel.label" id="label">
-              </div>
-              <div>
-                  <label for="topic">Topic</label>
-                  <input v-model="channel.topic" id="topic">
-              </div>
-              <div class="button">
-                  <input type="submit" value="Go">
-              </div>
-          </form>
+    <el-row :gutter="20">
+      <el-col :span="5">
+        <el-aside width="200px">
+          <el-menu :default-openeds="['1']">
+            <el-submenu index="1">
+              <template slot="title"><i class="el-icon-menu"></i>Channels</template>
+              <el-menu-item-group>
+                    <el-menu-item 
+                      index=""
+                      v-for="channel in channels" 
+                      @click="getChannel(channel._id)" 
+                      v-bind:data="channel" 
+                      v-bind:key="channel._id">
+                        {{ channel.label }}
+                      </el-menu-item>
+              </el-menu-item-group>
+            </el-submenu>
+          </el-menu>
+        </el-aside>
+      </el-col>
 
-          <br/><br/>
+      <el-col :span="15">
+        <el-container>
 
-          <h1>Channel posts :</h1>
-          <div v-for="message in messages"> 
-              <div>
-                <p v-if="(editMode.id==message._id)"><input type="text" v-bind:id="message._id" v-model="editMsg.message"/></p> 
-                <p v-else>Message : {{message.message}}</p> 
-              </div>
-              <div>
-                <button @click="deleteMessage(message._id)">delete</button>
+          <el-header style="text-align: right; font-size: 12px">
+            <span>Welcome {{user.fullname}} </span>
+            <el-dropdown>
+              <i class="el-icon-setting" style="margin-right: 15px"></i>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item @click.native="home()">Homepage</el-dropdown-item>
+                <el-dropdown-item @click.native="users()">List users</el-dropdown-item>
+                <el-dropdown-item @click.native="profile()">Profile</el-dropdown-item>
+                <el-dropdown-item @click.native="signout()">Logout</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </el-header>
 
-                <button v-if="(editMode.id==message._id)" @click="saveMessage(message._id)" v-bind:id="message._id">save</button>
-                <button v-else @click="editMessage(message._id)" v-bind:id="message._id">edit</button>
-                
-              </div>
-            <!-- <br/> {{message}} -->
-          </div>
+          <el-main>
+              <el-tabs v-model="activeName" @tab-click="handleClick">
+                <el-tab-pane label="Channel" name="first">
 
-          <br/><br/>
+                    <el-form>
+                        <el-form-item label="Message">
+                            <el-input @keyup.enter="addChannelPost" v-model="message.message" id="message" clearable></el-input>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" @click="addChannelPost">Send</el-button>
+                        </el-form-item>
+                    </el-form>
+                    <div v-for="message in messages.slice().reverse()"> 
 
-          <h1>Add channel post :</h1>
-          <form @submit.prevent="addChannelPost()">
-              <div>
-                  <label for="message">message</label>
-                  <input v-model="message.message" id="message">
-              </div>
-              <div class="button">
-                  <input type="submit" value="Go">
-              </div>
-          </form>
+                        <el-form>
+                            <el-form-item v-if="(editMode.id==message._id)">
+                                <el-input v-model="editMsg.message" v-bind:id="message._id" clearable></el-input>
+                                <div style="text-align: center;padding-top:10px;">
+                                    <el-button type="primary" @click="saveMessage(message._id)" v-bind:id="message._id">save</el-button>
+                                </div>
+                            </el-form-item>
+                            <el-form-item v-else :label="message.message">
+                                <div style="text-align: right">
+                                    <el-button type="primary" @click="editMessage(message._id)" v-bind:id="message._id">edit</el-button>
+                                    <el-button type="danger" @click="deleteMessage(message._id)">delete</el-button>
+                                </div>
+                            </el-form-item>
+                        </el-form>
 
-      </div>
-      <br/>
-      <br/>
+                    </div>
 
-      <button @click="del()">Delete channel</button> <br/>
-      <button @click="home()">Home</button> <br/>
+                </el-tab-pane>
+                <el-tab-pane label="Details" name="second">
+                    <h1>This is channel : {{channelInfo.topic}}</h1>
+                    Label : {{channelInfo.label}}
+                </el-tab-pane>
+                <el-tab-pane label="Edit" name="third">
 
-    </div>
+                    <el-form>
+                        <el-form-item label="Label">
+                            <el-input @keyup.enter="editChannel" v-model="channel.label" id="label" clearable></el-input>
+                        </el-form-item>
+                        <el-form-item label="Topic">
+                            <el-input @keyup.enter="editChannel" v-model="channel.topic" id="topic" clearable></el-input>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" @click="editChannel">Update</el-button>
+                        </el-form-item>
+                    </el-form>
+
+                    <el-alert v-if="created" title="Channel updated" type="success" center></el-alert>
+                    <el-alert v-if="error" title="An error has occured, please try again. If it persists contact a sytem administrator." type="error" center></el-alert>
+
+                    <div style="text-align: right">
+                        <el-button type="danger" @click="del()" round>Delete channel</el-button>
+                    </div>
+                </el-tab-pane>
+              </el-tabs>
+          </el-main>
+        </el-container>
+      </el-col>
+    </el-row>
 </template>
 
 <script>
@@ -69,12 +109,17 @@
       return {
         channel: {label: '', topic: ''},
         channelInfo: {},
+        channels: {},
         messages: {},
         message: {message: ''},
         editMsg: {message: ''},
         editMode: {
             id: ''
-        }
+        },
+        user: {},
+        activeName: 'first',
+        created: false,
+        error: false
       }
     },
     created() {
@@ -83,7 +128,19 @@
         })
         api.get('/channels/' + this.$route.params.id + '/posts').then((response) => {
             this.messages = response.data
+            console.log(this.messages)
         })
+        api.get('/channels').then((response) => {
+            this.channels = response.data
+        })
+        api.get('/members/' + this.user._id + '/signedin').then((response) => {
+            this.user = response.data
+        })
+        setInterval(function () {
+            api.get('/channels/' + this.$route.params.id + '/posts').then((response) => {
+                this.messages = response.data
+            })
+        }.bind(this), 5000); 
     },
     methods: {
       home() {
@@ -92,14 +149,23 @@
       editChannel() {
         return api.put('/channels/' + this.$route.params.id, this.channel).then(response => {
             api.get('/channels/' + this.$route.params.id).then((response) => {
+                this.created = true
                 this.channelInfo = response.data
                 this.channel.label = ''
                 this.channel.topic = ''
+                api.get('/channels').then((response) => {
+                    this.channels = response.data
+                })
             })
-        }).catch(error => {
-            console.log("store > channel > edit -> error")
-          }
-        )
+            setInterval(function () {
+                    this.created = false
+                }.bind(this), 3000); 
+            }).catch(error => {
+                this.error = true
+                setInterval(function () {
+                    this.error = false
+                }.bind(this), 3000); 
+        })
       },
       del() {
           api.delete('/channels/' + this.$route.params.id).then(response => {
@@ -142,7 +208,24 @@
             }).catch(error => {
             console.log("error editing message")
           })
-      }
+        },
+        signout() {
+            this.$store.dispatch('auth/logout', this.user).then(response => {
+                this.$router.push({name: "signin"})
+            })
+        },  
+        profile () {
+            this.$router.push({name: "profile"})
+        },
+        users() {
+            this.$router.push({name: "users"})
+        },
+        getChannel(c) {
+            this.$router.push({name: "channel", params : { id : c}})
+        },
+        handleClick(tab, event) {
+            console.log(tab, event);
+        }
     }
   }
 </script>
