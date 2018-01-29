@@ -50,23 +50,27 @@
                     </el-form>
                     <div v-for="message in messages.slice().reverse()"> 
 
-                        <el-form>
+                        <el-form id="chat">
                             <el-form-item v-if="(editMode.id==message._id)">
-                                <el-input v-model="editMsg.message" v-bind:id="message._id" clearable></el-input>
+                                <el-input v-model="editMsg.message" v-bind:id="message._id" :placeholder="message.message" clearable></el-input>
                                 <div style="text-align: center;padding-top:10px;">
-                                    <el-button type="primary" @click="saveMessage(message._id)" v-bind:id="message._id">save</el-button>
+                                    <el-button type="success" @click="saveMessage(message._id)" v-bind:id="message._id">update</el-button>
+                                    <el-button type="danger" @click="cancelEdit(message._id)" v-bind:id="message._id">cancel</el-button>
                                 </div>
                             </el-form-item>
-                            <el-form-item v-else :label="message.message">
+                            <el-form-item v-else :label="user.fullname+' : '+message.message">
                                 <div style="text-align: right">
-                                    <el-button type="primary" @click="editMessage(message._id)" v-bind:id="message._id">edit</el-button>
+                                    <el-button type="warning" @click="editMessage(message._id)" v-bind:id="message._id">edit</el-button>
                                     <el-button type="danger" @click="deleteMessage(message._id)">delete</el-button>
+                                </div>
+                                <div style="text-align: right">
+                                    {{message.updated_at}}
                                 </div>
                             </el-form-item>
                         </el-form>
 
                     </div>
-
+                    
                 </el-tab-pane>
                 <el-tab-pane label="Details" name="second">
                     <h1>This is channel : {{channelInfo.topic}}</h1>
@@ -140,7 +144,7 @@
             api.get('/channels/' + this.$route.params.id + '/posts').then((response) => {
                 this.messages = response.data
             })
-        }.bind(this), 5000); 
+        }.bind(this), 5000);
     },
     methods: {
       home() {
@@ -197,6 +201,10 @@
       editMessage(id) {
           this.editMode.id = id
       },
+      cancelEdit(id) {
+          this.editMode.id = ''
+          this.editMode.value = false
+      },
       saveMessage(id) {
           this.editMode.value = false
           api.put('/channels/' + this.$route.params.id + '/posts/' + id, this.editMsg).then(response => {
@@ -229,3 +237,11 @@
     }
   }
 </script>
+
+<style>
+    #chat>.el-form-item {
+        border: 1px solid rgb(128, 128, 128);
+        border-radius: 3px;
+        padding: 5px 5px 5px 5px;
+    }
+</style>
