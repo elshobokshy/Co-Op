@@ -40,19 +40,19 @@
               <el-tabs v-model="activeName" @tab-click="handleClick">
                 <el-tab-pane label="Channel" name="first">
 
-                    <el-form>
+                    <el-form @submit.prevent.native="addChannelPost">
                         <el-form-item label="Message">
-                            <el-input @keyup.enter="addChannelPost" v-model="message.message" id="message" clearable></el-input>
+                            <el-input v-model="message.message" id="message" clearable></el-input>
                         </el-form-item>
                         <el-form-item>
-                            <el-button type="primary" @click="addChannelPost">Send</el-button>
+                            <el-button type="primary" @click="addChannelPost" value="submit">Send</el-button>
                         </el-form-item>
                     </el-form>
                     <div v-for="m in messages.slice().reverse()">
 
                         <el-form id="chat">
                             <el-form-item v-if="(editMode.id==m._id)">
-                                <el-input v-model="editMsg.message" v-bind:id="message._id" :placeholder="message.message" clearable></el-input>
+                                <el-input @keyup.enter.native="saveMessage(m._id)" v-model="editMsg.message" v-bind:id="message._id" :placeholder="message.message" clearable></el-input>
                                 <div style="text-align: center;padding-top:10px;">
                                     <el-button type="success" @click="saveMessage(m._id)" v-bind:id="message._id">update</el-button>
                                     <el-button type="danger" @click="cancelEdit(m._id)" v-bind:id="message._id">cancel</el-button>
@@ -80,10 +80,10 @@
 
                     <el-form>
                         <el-form-item label="Label">
-                            <el-input @keyup.enter="editChannel" v-model="channel.label" id="label" clearable></el-input>
+                            <el-input @keyup.enter.native="editChannel" v-model="channel.label" id="label" clearable></el-input>
                         </el-form-item>
                         <el-form-item label="Topic">
-                            <el-input @keyup.enter="editChannel" v-model="channel.topic" id="topic" clearable></el-input>
+                            <el-input @keyup.enter.native="editChannel" v-model="channel.topic" id="topic" clearable></el-input>
                         </el-form-item>
                         <el-form-item>
                             <el-button type="primary" @click="editChannel">Update</el-button>
@@ -188,16 +188,18 @@
             console.log("error deleting account")
           })
       },
-      addChannelPost() {
-          return api.post('/channels/' + this.$route.params.id + '/posts', this.message).then(response => {
-              api.get('/channels/' + this.$route.params.id + '/posts').then((response) => {
-                this.messages = response.data
-                this.message.message = ''
-              })
+      addChannelPost(event) {
+        api.post('/channels/' + this.$route.params.id + '/posts', this.message).then(response => {
+            api.get('/channels/' + this.$route.params.id + '/posts').then((response) => {
+              this.messages = response.data
+              this.message.message = ''
+            })
         }).catch(error => {
             console.log("store > channels > addpost -> error")
           }
         )
+        event.preventDefault()
+        event.stopPropagation()
       },
       deleteMessage(id) {
           api.delete('/channels/' + this.$route.params.id + '/posts/' + id).then(response => {

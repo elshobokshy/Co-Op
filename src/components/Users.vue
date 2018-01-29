@@ -37,7 +37,7 @@
           </el-header>
 
           <el-main>
-            <el-table :data="users" style="text-align: left">
+            <el-table :data="allUsers" style="text-align: left">
               <el-table-column prop="_id" label="ID"> 
               </el-table-column>
               <el-table-column prop="fullname" label="Name"> 
@@ -59,14 +59,14 @@ export default {
   name: 'Users',
   data () {
     return {
-      users: [{}],
+      allUsers: [{}],
       channels: {},
       user: {}
     }
   },
   created () {
     api.get('/members').then((response) => {
-      this.users = response.data
+      this.allUsers = response.data
     })
     api.get('/channels').then((response) => {
       this.channels = response.data

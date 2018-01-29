@@ -10,7 +10,8 @@
                       v-for="channel in channels" 
                       @click="getChannel(channel._id)" 
                       v-bind:data="channel" 
-                      v-bind:key="channel._id">
+                      v-bind:key="channel._id"
+                      index="1">
                         {{ channel.label }}
                       </el-menu-item>
               </el-menu-item-group>
@@ -38,10 +39,10 @@
             <el-form>
               <h1>Create Channel </h1>
               <el-form-item label="Label*">
-                  <el-input @keyup.enter="newChannel" v-model="channel.label" id="label" clearable></el-input>
+                  <el-input @keyup.enter.native="newChannel" v-model="channel.label" id="label" clearable></el-input>
               </el-form-item>
               <el-form-item label="Topic">
-                  <el-input @keyup.enter="newChannel" v-model="channel.topic" id="topic" clearable></el-input>
+                  <el-input @keyup.enter.native="newChannel" v-model="channel.topic" id="topic" clearable></el-input>
               </el-form-item>
               <el-form-item>
                   <el-button type="primary" @click="newChannel">Add</el-button>

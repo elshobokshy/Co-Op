@@ -4,13 +4,13 @@
             <h1>Create new account</h1>
             <el-form>
                 <el-form-item label="Full name*">
-                    <el-input @keyup.enter="newuser" v-model="createuser.fullname" id="fullname" clearable></el-input>
+                    <el-input @keyup.enter.native="newuser" v-model="createuser.fullname" id="fullname" clearable></el-input>
                 </el-form-item>
                 <el-form-item label="Email*">
-                    <el-input @keyup.enter="newuser" v-model="createuser.email" id="email" clearable></el-input>
+                    <el-input @keyup.enter.native="newuser" v-model="createuser.email" id="email" clearable></el-input>
                 </el-form-item>
                 <el-form-item label="Password*">
-                    <el-input @keyup.enter="newuser" v-model="createuser.password" id="password" type="password" clearable></el-input>
+                    <el-input @keyup.enter.native="newuser" v-model="createuser.password" id="password" type="password" clearable></el-input>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="newuser">Register</el-button>
