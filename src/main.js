@@ -6,6 +6,7 @@ import {router} from './router'
 import store from './store'
 import interceptors from './services/interceptors'
 
+import VueMarkdown from 'vue-markdown'
 import moment from 'moment'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
@@ -31,5 +32,5 @@ new Vue({
   router,
   store,
   template: '<App/>',
-  components: { App }
+  components: { App, VueMarkdown }
 })

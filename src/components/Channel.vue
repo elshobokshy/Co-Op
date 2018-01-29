@@ -52,13 +52,16 @@
 
                         <el-form id="chat">
                             <el-form-item v-if="(editMode.id==m._id)">
-                                <el-input @keyup.enter.native="saveMessage(m._id)" v-model="editMsg.message" v-bind:id="message._id" :placeholder="message.message" clearable></el-input>
+                                <el-input @keyup.enter.native="saveMessage(m._id)" v-model="editMsg.message" v-bind:id="message._id" :placeholder="m.message" clearable></el-input>
                                 <div style="text-align: center;padding-top:10px;">
                                     <el-button type="success" @click="saveMessage(m._id)" v-bind:id="message._id">update</el-button>
                                     <el-button type="danger" @click="cancelEdit(m._id)" v-bind:id="message._id">cancel</el-button>
                                 </div>
                             </el-form-item>
-                            <el-form-item v-else :label="getUser(m.member_id)+' : '+m.message">
+                            <el-form-item v-else :label="getUser(m.member_id)">
+                                <div style="text-align: center">
+                                    <vue-markdown v-bind:source="m.message"></vue-markdown>
+                                </div>
                                 <div style="text-align: right">
                                     <el-button type="warning" @click="editMessage(m._id)" v-bind:id="message._id">edit</el-button>
                                     <el-button type="danger" @click="deleteMessage(m._id)">delete</el-button>
@@ -106,6 +109,7 @@
 
 <script>
   import api from '../api'
+  import VueMarkdown from 'vue-markdown'
 
   export default {
     name: 'Channel',
@@ -127,6 +131,7 @@
         error: false
       }
     },
+    components: { 'vue-markdown' :  VueMarkdown},
     created() {
         api.get('/channels/' + this.$route.params.id).then((response) => {
             this.channelInfo = response.data
@@ -156,7 +161,7 @@
       getUser(u) {
         for(let i = 0; i<this.allUsers.length; i++) {
             if(u == this.allUsers[i]._id) {
-                return this.allUsers[i].fullname
+                return this.allUsers[i].fullname + ': '
             } 
         }
       },
