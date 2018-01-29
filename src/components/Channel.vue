@@ -48,23 +48,23 @@
                             <el-button type="primary" @click="addChannelPost">Send</el-button>
                         </el-form-item>
                     </el-form>
-                    <div v-for="message in messages.slice().reverse()"> 
+                    <div v-for="m in messages.slice().reverse()">
 
                         <el-form id="chat">
-                            <el-form-item v-if="(editMode.id==message._id)">
+                            <el-form-item v-if="(editMode.id==m._id)">
                                 <el-input v-model="editMsg.message" v-bind:id="message._id" :placeholder="message.message" clearable></el-input>
                                 <div style="text-align: center;padding-top:10px;">
-                                    <el-button type="success" @click="saveMessage(message._id)" v-bind:id="message._id">update</el-button>
-                                    <el-button type="danger" @click="cancelEdit(message._id)" v-bind:id="message._id">cancel</el-button>
+                                    <el-button type="success" @click="saveMessage(m._id)" v-bind:id="message._id">update</el-button>
+                                    <el-button type="danger" @click="cancelEdit(m._id)" v-bind:id="message._id">cancel</el-button>
                                 </div>
                             </el-form-item>
-                            <el-form-item v-else :label="user.fullname+' : '+message.message">
+                            <el-form-item v-else :label="getUser(m.member_id)+' : '+m.message">
                                 <div style="text-align: right">
-                                    <el-button type="warning" @click="editMessage(message._id)" v-bind:id="message._id">edit</el-button>
-                                    <el-button type="danger" @click="deleteMessage(message._id)">delete</el-button>
+                                    <el-button type="warning" @click="editMessage(m._id)" v-bind:id="message._id">edit</el-button>
+                                    <el-button type="danger" @click="deleteMessage(m._id)">delete</el-button>
                                 </div>
                                 <div style="text-align: right">
-                                    {{message.updated_at}}
+                                    {{m.updated_at | formatDate}}
                                 </div>
                             </el-form-item>
                         </el-form>
@@ -115,12 +115,13 @@
         channelInfo: {},
         channels: {},
         messages: {},
-        message: {message: ''},
+        message: {message: '', user: ''},
         editMsg: {message: ''},
         editMode: {
             id: ''
         },
         user: {},
+        allUsers: {},
         activeName: 'first',
         created: false,
         error: false
@@ -132,7 +133,9 @@
         })
         api.get('/channels/' + this.$route.params.id + '/posts').then((response) => {
             this.messages = response.data
-            console.log(this.messages)
+        })
+        api.get('/members').then((response) => {
+            this.allUsers = response.data
         })
         api.get('/channels').then((response) => {
             this.channels = response.data
@@ -149,6 +152,13 @@
     methods: {
       home() {
           this.$router.push({name: "home"})
+      },
+      getUser(u) {
+        for(let i = 0; i<this.allUsers.length; i++) {
+            if(u == this.allUsers[i]._id) {
+                return this.allUsers[i].fullname
+            } 
+        }
       },
       editChannel() {
         return api.put('/channels/' + this.$route.params.id, this.channel).then(response => {

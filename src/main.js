@@ -6,6 +6,7 @@ import {router} from './router'
 import store from './store'
 import interceptors from './services/interceptors'
 
+import moment from 'moment'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 
@@ -13,6 +14,12 @@ Vue.config.productionTip = false
 
 Vue.use(interceptors, {
   router
+})
+
+Vue.filter('formatDate', function(value) {
+  if (value) {
+    return moment(String(value)).format('MM/DD/YYYY HH:mm')
+  }
 })
 
 Vue.use(ElementUI)
