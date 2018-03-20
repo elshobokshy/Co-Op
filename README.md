@@ -17,7 +17,7 @@ In order to run the project, use he following commands
 
 ```
 * npm install
-* rpm run dev
+* npm run dev
 ```
 
 Then, a server is running on your local machine shown in your terminal.
